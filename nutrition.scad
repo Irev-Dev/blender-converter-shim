@@ -7,14 +7,15 @@ use <list-comprehension-demos/skin.scad>
 $fn=150;
 ID = 96.3;
 OD = 98.7;
-necking = 1.5;
+necking = 2;
 lip1Depth = 13;
 lip2Depth = 16;
 lip2DepthEnd = 19;
 lip2OD = 104;
+internalLipR=100; // as big as possible
 
 toothWidth = 3;
-toothHeight = 1.8;
+toothHeight = 1.3;
 toothTurns = 2.5;
 
 insideToothWidth = 4;
@@ -64,11 +65,11 @@ function sick(extension=0) = [
     [OD/2+necking,  lip1Depth-1,    0],
     [OD/2+necking,  lip2Depth,      0],
     [lip2OD/2+extension,  lip2Depth,      0],
-    [lip2OD/2+extension,  lip2DepthEnd,   2],
-    [lip2OD/2+10+extension/2,  lip2DepthEnd+10,   0],
-    [lip2OD/2+7,  lip2DepthEnd+10,   0],
-    [ID/2+necking,  lip2DepthEnd,   3],
-    [ID/2+necking,      lip1Depth,    1],
+    [lip2OD/2+extension,  lip2DepthEnd,   3],
+    [lip2OD/2+10+extension,  lip2DepthEnd+10,   extension/2],
+    [lip2OD/2+7,  lip2DepthEnd+10,   extension],
+    [ID/2+necking,  lip2DepthEnd,   4],
+    [ID/2+necking,      lip1Depth,    internalLipR],
     [ID/2,      lip1Depth,    0],
     [ID/2,0,0],
 ];
@@ -78,7 +79,7 @@ module outsideThread() {
         [-0.2,-2,0],
         [0,-2,0],
         [0,-toothWidth/2,0.2],
-        [toothHeight, -toothWidth/4, 0.3]
+        [toothHeight, -toothWidth/3.5, 0.3]
     ],0,[0,0]),10);
     difference() {
         straight_thread(
