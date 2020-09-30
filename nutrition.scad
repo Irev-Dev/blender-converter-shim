@@ -12,14 +12,14 @@ lip1Depth = 13;
 lip2Depth = 16;
 lip2DepthEnd = 19;
 lip2OD = 104;
-internalLipR=100; // as big as possible
+internalLipR=3; // as big as possible
 
 toothWidth = 3;
-toothHeight = 1.3;
+toothHeight = 1.2;
 toothTurns = 2.5;
 
 insideToothWidth = 4;
-insideToothHeight = 1.2;
+insideToothHeight = 1.4;
 insideToothTurns = 2.5;
 
 difference() {
@@ -55,7 +55,7 @@ module insideThreadNegative() {
 
 module body() {
     rotate_extrude(angle = 360, convexity = 10)polygon(polyRound(sick(),10));
-    for(rotIndex=[0:2])rotate([0,0,360/3*rotIndex])rotate_extrude(angle = 4, convexity = 10)polygon(polyRound(sick(4),5));
+    for(rotIndex=[0:2])rotate([0,0,360/3*rotIndex])rotate_extrude(angle = 6, convexity = 10)polygon(polyRound(sick(4),5));
 
 }
 
