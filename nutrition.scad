@@ -5,18 +5,20 @@ use <list-comprehension-demos/skin.scad>
 
 
 $fn=150;
+pfn=10;
 ID = 96.3;
 OD = 98.7;
-necking = 2;
+maxODinsideBlenderCup = 101.1;
+necking = 1.8;
 lip1Depth = 13;
 lip2Depth = 16;
 lip2DepthEnd = 19;
 lip2OD = 104;
 internalLipR=3; // as big as possible
 
-toothWidth = 3;
-toothHeight = 1.2;
-toothTurns = 2.5;
+toothWidth = 2.2;
+toothHeight = 1.15;
+toothTurns = 3.1;
 
 insideToothWidth = 4;
 insideToothHeight = 1.4;
@@ -25,17 +27,18 @@ insideToothTurns = 2.5;
 difference() {
     union() {
         body();
-        outsideThread();
     }
+    outsideThread();
     translate([0,0,8])insideThreadNegative();
+    // translate([0,-250,0])cube([500,500,500], center=true);
 }
 
 insideToothProfile = polyRound(mirrorPoints([
     [-0.1,insideToothWidth/2-2,0],
     [0,-insideToothWidth/2-2,0],
     [0,-insideToothWidth/2,0.2],
-    [insideToothHeight, 0, 0]
-],0,[0,1]),10);
+    [insideToothHeight, 0, 0.5]
+],0,[0,1]),pfn);
 
 // translate([ID/2+1,-1,0])cube([1,1,5.5]);
 
@@ -54,16 +57,16 @@ module insideThreadNegative() {
 
 
 module body() {
-    rotate_extrude(angle = 360, convexity = 10)polygon(polyRound(sick(),10));
-    for(rotIndex=[0:2])rotate([0,0,360/3*rotIndex])rotate_extrude(angle = 6, convexity = 10)polygon(polyRound(sick(4),5));
+    rotate_extrude(angle = 360, convexity = 10)polygon(polyRound(sick(),pfn));
+    for(rotIndex=[0:2])rotate([0,0,360/3*rotIndex])rotate_extrude(angle = 6, convexity = 10)polygon(polyRound(sick(4),pfn));
 
 }
 
 function sick(extension=0) = [
-    [OD/2,      0,              0],
-    [OD/2,      lip1Depth-1,    0],
-    [OD/2+necking,  lip1Depth-1,    0],
-    [OD/2+necking,  lip2Depth,      0],
+    [maxODinsideBlenderCup/2,      0,              0],
+    // [maxODinsideBlenderCup/2,      lip1Depth-1,    0],
+    // [maxODinsideBlenderCup/2,  lip1Depth-1,    0],
+    [maxODinsideBlenderCup/2,  lip2Depth,      0],
     [lip2OD/2+extension,  lip2Depth,      0],
     [lip2OD/2+extension,  lip2DepthEnd,   3],
     [lip2OD/2+10+extension,  lip2DepthEnd+10,   extension/2],
@@ -76,16 +79,16 @@ function sick(extension=0) = [
 
 module outsideThread() {
     toothProfile = polyRound(mirrorPoints([
-        [-0.2,-2,0],
-        [0,-2,0],
-        [0,-toothWidth/2,0.2],
-        [toothHeight, -toothWidth/3.5, 0.3]
-    ],0,[0,0]),10);
+        [+0.2,2,0],
+        [0,2,0],
+        [0,toothWidth/2,0.2],
+        [-toothHeight, 0, 0.5]
+    ],0,[0,1]),pfn);
     difference() {
-        straight_thread(
+        translate([0,0,-2.5])straight_thread(
             section_profile = toothProfile,
             higbee_arc = 20,
-            r     = OD/2,
+            r     = OD/2+toothHeight,
             turns = toothTurns,
             pitch = 5,
             fn    = $fn
