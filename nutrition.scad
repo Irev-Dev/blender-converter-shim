@@ -16,8 +16,8 @@ lip2DepthEnd = 19;
 lip2OD = 104;
 internalLipR=3; // as big as possible
 
-toothWidth = 2;
-toothHeight = 1.8;
+toothWidth = 2.2;
+toothHeight = 2;
 toothTurns = 3.1;
 
 insideToothWidth = 4;
