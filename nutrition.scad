@@ -30,8 +30,15 @@ difference() {
     }
     outsideThreadNegative();
     translate([0,0,8])insideThreadNegative();
+    rotate_extrude(angle=360, convexity=10)polygon([
+        [200,                               0],
+        [maxODinsideBlenderCup/2-0.7,       0],
+        [maxODinsideBlenderCup/2,           lip2Depth],
+        [200,                               lip2Depth]
+    ]);
     // translate([0,-250,0])cube([500,500,500], center=true);
 }
+
 
 
 module insideThreadNegative() {
