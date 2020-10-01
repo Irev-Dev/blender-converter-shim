@@ -8,7 +8,7 @@ $fn=150;
 pfn=10;
 ID = 96.3;
 OD = 98.7;
-maxODinsideBlenderCup = 101.1;
+maxODinsideBlenderCup = 101.2;
 necking = 1.8;
 lip1Depth = 13;
 lip2Depth = 16;
@@ -16,8 +16,8 @@ lip2DepthEnd = 19;
 lip2OD = 104;
 internalLipR=3; // as big as possible
 
-toothWidth = 2.2;
-toothHeight = 1.15;
+toothWidth = 2;
+toothHeight = 1.8;
 toothTurns = 3.1;
 
 insideToothWidth = 4;
@@ -28,21 +28,19 @@ difference() {
     union() {
         body();
     }
-    outsideThread();
+    outsideThreadNegative();
     translate([0,0,8])insideThreadNegative();
     // translate([0,-250,0])cube([500,500,500], center=true);
 }
 
-insideToothProfile = polyRound(mirrorPoints([
-    [-0.1,insideToothWidth/2-2,0],
-    [0,-insideToothWidth/2-2,0],
-    [0,-insideToothWidth/2,0.2],
-    [insideToothHeight, 0, 0.5]
-],0,[0,1]),pfn);
-
-// translate([ID/2+1,-1,0])cube([1,1,5.5]);
 
 module insideThreadNegative() {
+    insideToothProfile = polyRound(mirrorPoints([
+        [-0.1,insideToothWidth/2-2,0],
+        [0,-insideToothWidth/2-2,0],
+        [0,-insideToothWidth/2,0.2],
+        [insideToothHeight, 0, 0.5]
+    ],0,[0,1]),pfn);
     for(rotIndex=[0:5]) {
         rotate([0,0,rotIndex*60])straight_thread(
             section_profile = insideToothProfile,
@@ -63,27 +61,25 @@ module body() {
 }
 
 function sick(extension=0) = [
-    [maxODinsideBlenderCup/2,      0,              0],
-    // [maxODinsideBlenderCup/2,      lip1Depth-1,    0],
-    // [maxODinsideBlenderCup/2,  lip1Depth-1,    0],
-    [maxODinsideBlenderCup/2,  lip2Depth,      0],
-    [lip2OD/2+extension,  lip2Depth,      0],
-    [lip2OD/2+extension,  lip2DepthEnd,   3],
-    [lip2OD/2+10+extension,  lip2DepthEnd+10,   extension/2],
-    [lip2OD/2+7,  lip2DepthEnd+10,   extension],
-    [ID/2+necking,  lip2DepthEnd,   4],
-    [ID/2+necking,      lip1Depth,    internalLipR],
-    [ID/2,      lip1Depth,    0],
-    [ID/2,0,0],
+    [maxODinsideBlenderCup/2,       0,                  0],
+    [maxODinsideBlenderCup/2,       lip2Depth,          0],
+    [lip2OD/2+extension,            lip2Depth,          0],
+    [lip2OD/2+extension,            lip2DepthEnd,       3],
+    [lip2OD/2+7+extension,          lip2DepthEnd+10,    extension/2],
+    [lip2OD/2+4,                    lip2DepthEnd+10,    extension],
+    [ID/2+necking,                  lip2DepthEnd,       4],
+    [ID/2+necking,                  lip1Depth,          internalLipR],
+    [ID/2,                          lip1Depth,          0],
+    [ID/2,                          0,                  0],
 ];
 
-module outsideThread() {
+module outsideThreadNegative() {
     toothProfile = polyRound(mirrorPoints([
-        [+0.2,2,0],
-        [0,2,0],
-        [0,toothWidth/2,0.2],
-        [-toothHeight, 0, 0.5]
-    ],0,[0,1]),pfn);
+        [0.2,           2,                  0],
+        [0,             2,                  0],
+        [0,             toothWidth/2+0.3,   0.3],
+        [-toothHeight,  toothWidth/2,       0.4],
+    ],0,[0,0]),pfn);
     difference() {
         translate([0,0,-2.5])straight_thread(
             section_profile = toothProfile,
