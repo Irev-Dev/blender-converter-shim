@@ -2,8 +2,6 @@ include <lib/round-anything/polyround.scad>
 use <scad-utils/transformations.scad>
 use <list-comprehension-demos/skin.scad>
 
-
-
 $fn=150;
 pfn=10;
 ID = 96.3;
@@ -16,97 +14,92 @@ lip2DepthEnd = 19;
 lip2OD = 104;
 internalLipR=3; // as big as possible
 
-toothWidth = 2.2;
-toothHeight = 2;
+bladeCupToothWidth = 2.2;
+bladeCupToothHeight = 2;
 toothTurns = 3.1;
 
-insideToothWidth = 4;
-insideToothHeight = 1.4;
-insideToothTurns = 2.5;
+jarToothWidth = 4;
+jarToothHeight = 1.4;
 
 difference() {
     union() {
         body();
     }
-    outsideThreadNegative();
-    translate([0,0,8])insideThreadNegative();
-    rotate_extrude(angle=360, convexity=10)polygon([
-        [200,                               0],
-        [maxODinsideBlenderCup/2-0.7,       0],
-        [maxODinsideBlenderCup/2,           lip2Depth],
-        [200,                               lip2Depth]
-    ]);
+    bladeCupThreadNegative();
+    translate([0,0,8])jarThreadNegative();
+    taperNegative();
     // translate([0,-250,0])cube([500,500,500], center=true);
 }
 
+module taperNegative() {
+    rotate_extrude(angle=360, convexity=10)polygon([
+        [100,                               0],
+        [maxODinsideBlenderCup/2-0.7,       0],
+        [maxODinsideBlenderCup/2,           lip2Depth],
+        [100,                               lip2Depth]
+    ]);
+}
 
-
-module insideThreadNegative() {
-    insideToothProfile = polyRound(mirrorPoints([
-        [-0.1,insideToothWidth/2-2,0],
-        [0,-insideToothWidth/2-2,0],
-        [0,-insideToothWidth/2,0.2],
-        [insideToothHeight, 0, 0.5]
+module jarThreadNegative() {
+    jarThreadProfile = polyRound(mirrorPoints([
+        [-0.1,              -jarToothWidth/2-0.5,   0],
+        [0,                 -jarToothWidth/2-0.5,   0],
+        [0,                 -jarToothWidth/2,       0.2],
+        [jarToothHeight,    0,                      0.5]
     ],0,[0,1]),pfn);
-    for(rotIndex=[0:5]) {
-        rotate([0,0,rotIndex*60])straight_thread(
-            section_profile = insideToothProfile,
+    helixCount = 6;
+    for(rotIndex=[0:helixCount-1]) {
+        rotate([0,0,rotIndex*360/helixCount])straight_thread(
+            section_profile = jarThreadProfile,
             higbee_arc = 0,
             r     = ID/2,
             turns = 1/5,
-            pitch = 33,
+            pitch = 33, // part of the reason that the pitch is so big is because there are six of them around the jar (most threads are a single helix)
             fn    = $fn
         );
     }
 }
-
 
 module body() {
-    rotate_extrude(angle = 360, convexity = 10)polygon(polyRound(sick(),pfn));
-    for(rotIndex=[0:2])rotate([0,0,360/3*rotIndex])rotate_extrude(angle = 6, convexity = 10)polygon(polyRound(sick(4),pfn));
-
+    // This is basically a shap that would fill the void between the jar and the blade cap if there were no threads
+    // We'll cut our threads into this shape on both sides to try and leave as much material on this part as possible
+    function bodyWallProfile(extension=0) = [
+        [maxODinsideBlenderCup/2,       0,                  0],
+        [maxODinsideBlenderCup/2,       lip2Depth,          0],
+        [lip2OD/2+extension,            lip2Depth,          0],
+        [lip2OD/2+extension,            lip2DepthEnd,       3],
+        [lip2OD/2+7+extension,          lip2DepthEnd+10,    extension/2],
+        [lip2OD/2+4,                    lip2DepthEnd+10,    extension],
+        [ID/2+necking,                  lip2DepthEnd,       4],
+        [ID/2+necking,                  lip1Depth,          internalLipR],
+        [ID/2,                          lip1Depth,          0],
+        [ID/2,                          0,                  0],
+    ];
+    rotate_extrude(angle = 360, convexity = 10)polygon(polyRound(bodyWallProfile(),pfn));
+    for(rotIndex=[0:2])rotate([0,0,360/3*rotIndex])rotate_extrude(angle = 6, convexity = 10)polygon(polyRound(bodyWallProfile(4),pfn));
 }
 
-function sick(extension=0) = [
-    [maxODinsideBlenderCup/2,       0,                  0],
-    [maxODinsideBlenderCup/2,       lip2Depth,          0],
-    [lip2OD/2+extension,            lip2Depth,          0],
-    [lip2OD/2+extension,            lip2DepthEnd,       3],
-    [lip2OD/2+7+extension,          lip2DepthEnd+10,    extension/2],
-    [lip2OD/2+4,                    lip2DepthEnd+10,    extension],
-    [ID/2+necking,                  lip2DepthEnd,       4],
-    [ID/2+necking,                  lip1Depth,          internalLipR],
-    [ID/2,                          lip1Depth,          0],
-    [ID/2,                          0,                  0],
-];
-
-module outsideThreadNegative() {
-    toothProfile = polyRound(mirrorPoints([
-        [0.2,           2,                  0],
-        [0,             2,                  0],
-        [0,             toothWidth/2+0.3,   0.3],
-        [-toothHeight,  toothWidth/2,       0.4],
+module bladeCupThreadNegative() {
+    bladeCupThreadProfile = polyRound(mirrorPoints([
+        [0.2,                   2,                          0],
+        [0,                     2,                          0],
+        [0,                     bladeCupToothWidth/2+0.3,   0.3],
+        [-bladeCupToothHeight,  bladeCupToothWidth/2,       0.4],
     ],0,[0,0]),pfn);
-    difference() {
-        translate([0,0,-2.5])straight_thread(
-            section_profile = toothProfile,
-            higbee_arc = 20,
-            r     = OD/2+toothHeight,
-            turns = toothTurns,
-            pitch = 5,
-            fn    = $fn
-        );
-        translate([0,0,-5])cube([100,100,10], center=true);
-    }
-
+    translate([0,0,-2.5])straight_thread(
+        section_profile = bladeCupThreadProfile,
+        higbee_arc = 20,
+        r     = OD/2+bladeCupToothHeight,
+        turns = toothTurns,
+        pitch = 5,
+        fn    = $fn
+    );
 }
 
-
-
-
-
-
-
+// All the code below this point is from Helge's excellent hackaday post
+// https://hackaday.io/page/5252-generating-nice-threads-in-openscad
+// I found most other thread libries to be too highlevel and wanted to help you generate standardised threads
+// instead of something more bespoke.
 module straight_thread(section_profile, pitch = 4, turns = 3, r=10, higbee_arc=45, fn=120)
 {
 	$fn = fn;
@@ -124,6 +117,5 @@ module straight_thread(section_profile, pitch = 4, turns = 3, r=10, higbee_arc=4
 		];
 	skin(thing);
 }
-// radial scaling function for tapered lead-in and lead-out
-function lilo_taper(x,N,tapered_fraction) =     min( min( 1, (1.0/tapered_fraction)*(x/N) ), (1/tapered_fraction)*(1-x/N) )
-;
+
+function lilo_taper(x,N,tapered_fraction) =     min( min( 1, (1.0/tapered_fraction)*(x/N) ), (1/tapered_fraction)*(1-x/N) );
