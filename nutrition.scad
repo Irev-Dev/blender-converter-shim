@@ -1,9 +1,14 @@
-include <lib/round-anything/polyround.scad>
-use <scad-utils/transformations.scad>
-use <list-comprehension-demos/skin.scad>
+use <lib/Round-Anything/polyround.scad>
+use <lib/scad-utils/transformations.scad>
+use <lib/list-comprehension-demos/skin.scad>
+
+// use the includes below if you aren't using git and submodules and instead have included the three libraries in your library folder
+// use <Round-Anything/polyround.scad>
+// use <scad-utils/transformations.scad>
+// use <list-comprehension-demos/skin.scad>
 
 $fn=150;
-pfn=10;
+polyRoundFn=10;
 ID = 96.3;
 OD = 98.7;
 maxODinsideBlenderCup = 101.2;
@@ -46,7 +51,7 @@ module jarThreadNegative() {
         [0,                 -jarToothWidth/2-0.5,   0],
         [0,                 -jarToothWidth/2,       0.2],
         [jarToothHeight,    0,                      0.5]
-    ],0,[0,1]),pfn);
+    ],0,[0,1]),polyRoundFn);
     helixCount = 6;
     for(rotIndex=[0:helixCount-1]) {
         rotate([0,0,rotIndex*360/helixCount])straight_thread(
@@ -75,8 +80,8 @@ module body() {
         [ID/2,                          lip1Depth,          0],
         [ID/2,                          0,                  0],
     ];
-    rotate_extrude(angle = 360, convexity = 10)polygon(polyRound(bodyWallProfile(),pfn));
-    for(rotIndex=[0:2])rotate([0,0,360/3*rotIndex])rotate_extrude(angle = 6, convexity = 10)polygon(polyRound(bodyWallProfile(4),pfn));
+    rotate_extrude(angle = 360, convexity = 10)polygon(polyRound(bodyWallProfile(),polyRoundFn));
+    for(rotIndex=[0:2])rotate([0,0,360/3*rotIndex])rotate_extrude(angle = 6, convexity = 10)polygon(polyRound(bodyWallProfile(4),polyRoundFn));
 }
 
 module bladeCupThreadNegative() {
@@ -85,7 +90,7 @@ module bladeCupThreadNegative() {
         [0,                     2,                          0],
         [0,                     bladeCupToothWidth/2+0.3,   0.3],
         [-bladeCupToothHeight,  bladeCupToothWidth/2,       0.4],
-    ],0,[0,0]),pfn);
+    ],0,[0,0]),polyRoundFn);
     translate([0,0,-2.5])straight_thread(
         section_profile = bladeCupThreadProfile,
         higbee_arc = 20,

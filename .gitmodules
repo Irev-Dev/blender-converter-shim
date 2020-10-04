@@ -1,3 +1,9 @@
-[submodule "lib/round-anything"]
-	path = lib/round-anything
-	url = git@github.com:Irev-Dev/Round-Anything.git
+[submodule "lib/--force"]
+	path = lib/--force
+	url = https://github.com/Irev-Dev/Round-Anything.git
+[submodule "lib/Round-Anything"]
+	path = lib/Round-Anything
+	url = https://github.com/Irev-Dev/Round-Anything.git
+[submodule "lib/list-comprehension-demos"]
+	path = lib/list-comprehension-demos
+	url = https://github.com/openscad/list-comprehension-demos.git
