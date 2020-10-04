@@ -1,6 +1,8 @@
 
 A small project for making big smoothies with a 2 litre jar 🥤
 
+Please note that 3d printing and food safety can be tricky even with food safe plastics, due to the additive process. This is somewhat mitigated by the fact that with this design the glass jar is what contacts the seal, not the plastic, but it's still at your own risk.
+
 <img src="https://github.com/Irev-Dev/repo-images/blob/main/images/thumnail-shim.png">
 
 
